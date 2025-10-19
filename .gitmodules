@@ -1,0 +1,3 @@
+[submodule "bbf-kubernetes"]
+	path = bbf-kubernetes
+	url = git@github.com:aoi1/bbf-kubernetes.git
