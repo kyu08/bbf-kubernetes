@@ -6,7 +6,7 @@
 ## Chapter 2 Kubernetesクラスタをつくってみる
 - Control PlaneがWoker Noteに直接指示するのではなく、Woker NodeがControl Planeに問い合わせるアーキテクチャになっている。(コレオグラフィっぽい感じ？)
 
-## Chapter 4 アプリケーションをKubenetesクラスタ上につくる
+## Chapter 4 アプリケーションをKubernetesクラスタ上につくる
 ### `Namespace`
 - Namespaceは単一クラスタ内のリソース群を分離するメカニズムを提供する。
 
@@ -67,3 +67,32 @@ $ kubectl edit pod myapp
 ```sh
 $ kubectl delete pod myapp
 ```
+
+## Chapter 6 Kubernetes リソースをつくって壊そう
+- ReplicaSetとDeployment
+    - DeploymentはReplicaSetというリソースを作り、ReplicaSetがPodを作成する。
+    - Deployment -> ReplicaSet -> Pod という関係性
+
+### `ReplicaSet`
+> ReplicaSetは指定した数のPodを複製するリソースです。Podリソースと異なるところは、Podを複製できるところです。複製するPodの数をreplicasで指定できます。
+
+### `Deployment`
+本番環境で無停止でコンテナイメージのアップデートを行うためには複数のReplicaSetが必要になる。ReplicaSetを管理する上位概念がDeployment。
+
+### `StrategyType`
+Deploymentを利用してPodを更新するときに、どのような戦略で更新するかを指定する設定値。
+
+以下の2つが選択可能。
+1. `Recreate`: 全部のPodを同時に更新する
+1. `RollingUpdate`: Podを順番に更新する。別途`RollingUpdateStrategy`を記載することができる。
+
+`RollingUpdateStrategy`に指定できる値は以下の2つ。
+1. `maxUnavailable`: 最大いくつのPodを同時にシャットダウンできるか。e.g. 25%だったら4つPodがある場合、1つずつPodを再作成する。パーセントではなく個数を書くことも可能。
+1. `maxSurge`: 最大いくつのPodを新規作成できるか。
+
+これらを適切に設定しておくことでPodの数が増えすぎるのを防ぐことができる。
+
+Podの数が増えすぎると以下の様な困りが起きうる。
+
+- インフラコストが増大する
+- ノードのキャパシティが枯渇してしまい、Rolling Updateが終わらなくなる
