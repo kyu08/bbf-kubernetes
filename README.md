@@ -128,6 +128,15 @@ SecretをPodに読み込む方法は以下の2つ。
 1. コンテナの環境変数として読み込む
 1. ボリュームとしてコンテナに設定ファイルを読み込む
 
+### `Job`
+- Jobは一つ以上のPodを作成し、指定された数のPodが正常に終了するまでPodの実行を再試行し続ける。
+- Podが正常に終了するとJobは成功したPodの数を追跡する。指定された完了数に達するとそのJobは完了したとみなされる。
+- Jobを削除すると作成されたPodも一緒に削除される。
+- Jobを一時停止すると再開されるまで、稼働しているPodは全部削除される。
 
+ref: https://kubernetes.io/ja/docs/concepts/workloads/controllers/job/
 
+### `CronJob`
+- CronJobは定期的にJobを生成するリソース。
+- CronJobはJobを作成し、JobはPodを作成する。
 
