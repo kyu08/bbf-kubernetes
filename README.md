@@ -78,7 +78,7 @@ $ kubectl delete pod myapp
 ### `Deployment`
 本番環境で無停止でコンテナイメージのアップデートを行うためには複数のReplicaSetが必要になる。ReplicaSetを管理する上位概念がDeployment。
 
-### `StrategyType`
+#### `StrategyType`
 Deploymentを利用してPodを更新するときに、どのような戦略で更新するかを指定する設定値。
 
 以下の2つが選択可能。
@@ -138,4 +138,42 @@ ref: https://kubernetes.io/ja/docs/concepts/workloads/controllers/job/
 ### `CronJob`
 - CronJobは定期的にJobを生成するリソース。
 - CronJobはJobを作成し、JobはPodを作成する。
+
+## Chapter 7 安全なステートレス・アプリケーションをつくるには
+まずはじめに3種類のProbeについて説明する。
+
+- Readiness probe
+- Liveness probe
+- Startup probe
+
+### `Readiness probe`
+- コンテナがReadyになるまでの時間やエンドポイントを制御するのがReadiness probe。
+- Readiness probeが失敗すると、Serviceリソースの接続対象から外され、トラフィックを受けなくなる。
+
+### `Liveness probe`
+- Liveness probeが失敗するとPodが再起動される。
+- 再起動で治るケースでは問題ないが、最悪の場合再起動の無限ループに入る可能性があるので注意が必要。
+- Readiness probeを待つような挙動が組み込まれているわけではないため、`initialDelaySeconds`を調整するかStartup probeを使用する必要がある。
+
+### `Startup probe`
+- Startup probeはコンテナの初回起動時にのみ利用するProbe。
+- Startup probeが成功するまで、Liveness probeとReadiness probeは無視される。
+- [Kubernetes version 1.18](https://github.com/kubernetes/kubernetes/releases/tag/v1.18.0)から導入された機能。(Mar 26, 2020にリリースされたバージョンらしい。)
+
+マニフェストは以下のような形式。
+
+```yaml
+startupProbe:
+    httpGet:
+        path: /healthz
+        port: liveness-port
+    failureThreshold: 30
+    periodSeconds: 10
+```
+
+- `failureThreshold`: Probeが失敗した場合、KubernetesはfailureThresholdに設定した回数までProbeを試行します。 Liveness Probeにおいて、試行回数に到達することはコンテナを再起動することを意味します。 Readiness Probeの場合は、Podが準備できていない状態として通知されます。デフォルトは3。最小値は1。
+- `periodSeconds`: Probeが実行される頻度(秒数)。デフォルトは10秒。最小値は1。 コンテナが起動してから準備が整うまでの間、periodSecondsで指定した間隔とは異なるタイミングでReadiness Probeが実行される場合があります。 これは、Podをより早く準備完了の状態に移行させるためです。
+
+ref: https://kubernetes.io/ja/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+
 
