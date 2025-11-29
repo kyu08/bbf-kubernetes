@@ -1,10 +1,9 @@
-# bbf-kubernetes
 つくって、壊して、直して学ぶ Kubernetes入門 https://www.shoeisha.co.jp/book/detail/9784798183961
 
 公式リソース: https://github.com/aoi1/bbf-kubernetes
 
 ## Chapter 2 Kubernetesクラスタをつくってみる
-- Control PlaneがWoker Noteに直接指示するのではなく、Woker NodeがControl Planeに問い合わせるアーキテクチャになっている。(コレオグラフィっぽい感じ？)
+- Control PlaneがWorker Noteに直接指示するのではなく、Worker NodeがControl Planeに問い合わせるアーキテクチャになっている。(コレオグラフィっぽい感じ？)
 
 ## Chapter 4 アプリケーションをKubernetesクラスタ上につくる
 ### `Namespace`
