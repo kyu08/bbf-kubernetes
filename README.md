@@ -96,3 +96,16 @@ Podの数が増えすぎると以下の様な困りが起きうる。
 
 - インフラコストが増大する
 - ノードのキャパシティが枯渇してしまい、Rolling Updateが終わらなくなる
+
+### `kubectl delete`でDeploymentのpodを削除してみる
+`kubectl delete pod <pod_name>` でpodを削除しても一瞬で新しいpodが立ち上がる。
+
+### `Service`
+- DeploymentはIPアドレスを持たないため、Deploymentで作成したPodにアクセスするためには個々のPodのIPアドレスを指定して接続する必要がある。
+- Serviceを用いると`service-name.default.svc.cluster.local`のようなドメイン名でアクセスできるようになる。
+
+#### `Service`のType
+- `ClusterIP` (デフォルト): クラスタ内部のIPアドレスでServiceを公開する。このTypeで指定されたIPアドレスはクラスタ内部からしかアクセスできない。`Ingress`というリソースを利用することで外部公開が可能になる。
+- `NodePort`: すべてのNodeのIPアドレスで指定したポート番号を公開する
+- `LoadBalancer`: 外部ロードバランサを用いて外部IPアドレスを公開する。LBは別途用意する必要がある。
+- `ExternalName`: ServiceをexternalNameフィールドの内容にマッピングする。(e.g. `api.example.com`)このマッピングにより、クラスタのDNSサーバがその外部ホスト名の値をもつCNAMEレコードを返すように設定される。
