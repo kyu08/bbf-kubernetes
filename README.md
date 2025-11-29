@@ -176,4 +176,36 @@ startupProbe:
 
 ref: https://kubernetes.io/ja/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 
+### コンテナのリソース使用量を要求する `Resource requests`
+- 確保したいリソースの最低使用量を指定することができる設定値。
+- Kubernetesのスケジューラはこの値を見てスケジュールするNodeを決定する。
+- どのNodeもRequestsにかかれている量が確保できなければPodはスケジュールされない。
+
+### コンテナのリソース使用量を制限する `Resource limits`
+- コンテナが使用できるリソース使用量の上限を指定する設定値。
+- コンテナはこのLimitsを超えてリソースを使用することはできない。
+- メモリが上限値を超える場合、OOMでPodがKillされる。
+- CPUが上限値を超えた場合は即座にPodがKillされるのではんくスロットリングが発生し、アプリケーションの動作が遅くなる。
+
+### メモリ
+- 単位を指定しない場合、`1`は1byteを意味する。
+- K, M, Gなどの接頭語だけでなく、Ki, Mi, Giなども利用できる。
+
+### CPU
+- 単位を指定しない場合、`1`はCPUの1コアを意味する。
+
+### PodのQuality of Service(QoS) Classes
+- OOM KillerはQoSに応じてOOM KillするPodの優先順位を決定し、必要に応じて優先度の低いPodからOOM Killする。
+- QoSクラスには次の3種類がある。
+
+
+| クラス名 | OOM Killの優先度 | 条件 |
+|----------|------------------|------|
+| Guaranteed | 3 | Pod内のすべてのコンテナにリソースのrequestsとlimitsが指定されている。さらに、メモリとCPUの両方にrequests=limits、となる値が指定されている。 |
+| Burstable | 2 |  Pod内のコンテナのうち少なくとも1つはメモリまたはCPUのrequests/limitsが指定されている。 |
+| BestEffort | 1 | GuaranteedでもBurstableでもないもの。リソースに何も指定していない。 |
+
+k9sでdescribeしたときの様子。QoS Classが表示されている。
+
+<img width="4008" height="2484" alt="Image" src="https://github.com/user-attachments/assets/c0f8624a-69ec-4417-ad1d-0d42cad9aab6" />
 
