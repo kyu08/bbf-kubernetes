@@ -281,3 +281,14 @@ Events:            <none>
 
 ### `Vertical Pod Autoscaler`(VPA)
 HPAとは同時に使用できない。(HPAのみ利用するケースが多い)
+
+### アプリケーションの可用性を保証する`PodDisruptionBudget(PDB)`
+- Nodeが故障したりKubernetesのバージョン更新などでNodeのシャットダウンが必要になることがある。
+- DeploymentでカバーできるのはあくまでPodを更新するときのみ。
+- NodeをメンテナンスするためにNodeからPodを安全に退避させるための機能の1つがPod Disruption Budget(PDB)。
+
+以下のような設定値がある。
+- `minAvailable`: 最低いくつのPodが利用可能な状態にするか
+- `maxUnavailable`: 最低いくつのPodが利用不可能な状態になっていいか
+
+Kubernetesはこれらの指定された値をみて、退避させるPodの数を制御してくれる。
