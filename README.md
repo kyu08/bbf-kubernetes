@@ -269,3 +269,15 @@ Events:            <none>
 ```
 
 20億...でかい。
+
+### `Horizontal Pod Autoscaler`(HPA)
+- Podを水平スケールさせるためのリソース。
+- 通常CPUやメモリの値に応じてPodの数を増減させるが、任意のメトリクスを利用することも可能。
+- HPAを利用するためにはmetrics-serverをインストールする必要がある。
+
+負荷を掛けて水平スケールさせている様子。
+
+<img width="4004" height="3284" alt="Image" src="https://github.com/user-attachments/assets/9f0786ee-20c1-4c9a-a935-c2a43941eb73" />
+
+### `Vertical Pod Autoscaler`(VPA)
+HPAとは同時に使用できない。(HPAのみ利用するケースが多い)
