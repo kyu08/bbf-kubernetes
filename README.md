@@ -292,3 +292,33 @@ HPAとは同時に使用できない。(HPAのみ利用するケースが多い)
 - `maxUnavailable`: 最低いくつのPodが利用不可能な状態になっていいか
 
 Kubernetesはこれらの指定された値をみて、退避させるPodの数を制御してくれる。
+
+## Chapter 9 Kubernetesの仕組み、アーキテクチャを理解しよう
+![Image](https://github.com/user-attachments/assets/5af3798d-6c4c-48bb-b170-1d48cc2f75bc)
+
+### Control Plane
+
+
+- kube-apiserverはRESTで通信可能なAPIサーバ
+- etcdは分散型KVS。
+- -> コントロールプレーンはAPIサーバとデータベースでできている。
+- kube-apiserverはユーザー(kubectl)からリクエストを受けてetcdにデータを保存したり、etcdに保存してあるデータを取得してユーザーに返したりしている。
+- kube-schedulerはPodをNodeにスケジュールする役割を担っている。
+- kube-contoller-managerはKubernetesを最低限動かすために必要な複数のコントローラを動かしている。
+
+### Worker Node
+- Worker Nodeは実際にアプリケーションコンテナの起動を行うNode。
+- kubelet
+    - クラスタ内の各Node上で動作している。
+    - Podに紐づくコンテナを管理する。
+    - kubeletが起動しているNodeにPodがスケジュールされるとコンテナランタイムに指示してコンテナを起動する。
+- kube-proxy
+    - Kubernetes Serviceリソースなどに応じてネットワーク設定を行うコンポーネント。
+    - クラスタ内の各Node上で動作している。
+    - kube-proxyによってクラスタ内外のネットワークセッションからPodへのネットワーク通信が可能になる。
+- コンテナランタイム
+    - コンテナを実行する役割のソフトウェア。
+
+### kubectl
+- kubectlはkube-apiserverと通信するためのCLIツール。
+- kubectlはkube-apiserver間はJSONでやりとりをするが、kubectlはユーザーとyaml形式でやりとりできるように変換してくれている。
