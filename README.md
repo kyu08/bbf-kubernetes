@@ -209,3 +209,63 @@ k9sでdescribeしたときの様子。QoS Classが表示されている。
 
 <img width="4008" height="2484" alt="Image" src="https://github.com/user-attachments/assets/c0f8624a-69ec-4417-ad1d-0d42cad9aab6" />
 
+### Nodeを指定する: `Node selector`
+- 特定のNodeにのみスケジュールするという制御を行う機能。
+
+### Podのスケジュールを柔軟に指定する: `Affinity`と`Anti-Affinity`
+Affinity, Anti-Affinityには以下の3種類がある。
+
+1. Node affinity
+1. Pod affinity
+1. Pod anti-affinity
+
+#### `Node affinity`
+- Node selectorとは異なり、「可能ならスケジュールする」という選択が可能。
+- `nodeAffinity`には、`requiredDuringSchedulingIgnoredDuringExecution`または`preferredDuringSchedulingIgnoredDuringExecution`を指定することができる。
+- `requiredDuringSchedulingIgnoredDuringExecution`
+    - 対応するNodeが見つからない場合、Podをスケジュールしない。(Node selectorと同じ挙動)
+- `preferredDuringSchedulingIgnoredDuringExecution`
+    - 対応するNodeが見つからない場合、適当なNodeにスケジュールする。
+
+#### `Pod Affinity`と`Pod Anti-Affinity`
+- Pod間のaffinity設定。
+- 同じアプリケーションを動かしているPod同士を別のNodeにスケジュールする、といった設定が可能。
+
+#### Podを分散するための設定: `Pod Topology Spread Constaints`
+- Podを分散させるための設定。
+- たとえば`topologyKey`にNodeの`kubernetes.io/hostname`ラベルを指定するとホスト間でPodを分散してスケジュールできる。
+- `maxSkew`: Node間のPodの最大差分を指定することで分散の仕方を調整できる。
+
+#### `Taint`と`Toleration`
+- TaintとTolerationはそれぞれ対になる概念。
+- TaintはNodeに付与する設定で、TolerationはPodに付与する設定。
+- Taint/Tolerationは「あるNodeが特定のPodにしかスケジュールしたくない（とくに指定のないPodをスケジュールを拒否したい）」といった指定方法になる。（あまりわからなかったがいったんスキップ）
+
+#### `Pod Priority`と`Preemption`
+- PodにはPriority(優先度)を設定することができる。
+- 優先度は`PriorityClass`というリソースを利用して指定する。
+- `priorityClassName`を指定したPodがどのNodeにもスケジュールできないときにpreemption(追い出し)が発生する
+    - あるNode上にスケジュールされているPodのうち、より優先度の低いPodをEvict(強制退去)させることで優先度の高いPodをスケジュール可能にする。
+- Kubernetesでは`system-cluster-critical`と`system-node-critical`というPriorityClassがデフォルトで作成される。
+
+```sh
+$ kubectl describe pc
+Name:              system-cluster-critical
+Value:             2000000000
+GlobalDefault:     false
+PreemptionPolicy:  PreemptLowerPriority
+Description:       Used for system critical pods that must run in the cluster, but can be moved to another node if necessary.
+Annotations:       <none>
+Events:            <none>
+
+
+Name:              system-node-critical
+Value:             2000001000
+GlobalDefault:     false
+PreemptionPolicy:  PreemptLowerPriority
+Description:       Used for system critical pods that must not be moved from their current node.
+Annotations:       <none>
+Events:            <none>
+```
+
+20億...でかい。
