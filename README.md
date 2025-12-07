@@ -322,3 +322,20 @@ Kubernetesはこれらの指定された値をみて、退避させるPodの数�
 ### kubectl
 - kubectlはkube-apiserverと通信するためのCLIツール。
 - kubectlはkube-apiserver間はJSONでやりとりをするが、kubectlはユーザーとyaml形式でやりとりできるように変換してくれている。
+
+## Chapter 11 オブザーバビリティとモニタリングに触れてみよう
+Prometheusで`go_gc_duration_seconds`のグラフを表示した様子。
+
+<img width="2992" height="3158" alt="CleanShot 2025-12-08 at 01 54 05@2x" src="https://github.com/user-attachments/assets/3a7f9f09-1bf8-42d2-8d41-dac05b391db9" />
+
+書籍の手順だとローカル起動したGrafanaにログインする際にパスワードが間違っていると表示された。
+以下のコマンドでパスワードを取得してログインしたら入れた。
+
+```sh
+kubectl get secret --namespace monitoring kube-prometheus-stack-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+```
+
+Grafanaで`go_gc_duration_seconds`のグラフを表示した様子。
+
+<img width="2992" height="3158" alt="CleanShot 2025-12-08 at 02 00 14@2x" src="https://github.com/user-attachments/assets/741d4ff0-670a-477e-a7e7-20c7360a97b6" />
+
